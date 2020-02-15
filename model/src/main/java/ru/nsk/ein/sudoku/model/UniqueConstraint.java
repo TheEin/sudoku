@@ -39,4 +39,9 @@ public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstrain
         }
         return possibleValues;
     }
+
+    @Override
+    public EnumSet<A> possibleValues() {
+        return possibleValues;
+    }
 }

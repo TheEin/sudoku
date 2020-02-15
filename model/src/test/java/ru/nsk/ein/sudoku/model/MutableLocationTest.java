@@ -14,9 +14,9 @@ public class MutableLocationTest extends LocationTest<MutableLocation> {
 
     @Test
     public void testSetPosition() {
-        Location before = testLocation.toImmutable();
+        ImmutableLocation before = testLocation.toImmutable();
         testLocation.position(0, testLocation.position(0) + 1);
-        Location after = testLocation.toImmutable();
+        ImmutableLocation after = testLocation.toImmutable();
         assertNotEquals(before, after);
     }
 

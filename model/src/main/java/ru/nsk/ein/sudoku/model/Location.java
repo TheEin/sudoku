@@ -3,11 +3,13 @@ package ru.nsk.ein.sudoku.model;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * A multi-dimensional cell location
  */
-public abstract class Location implements Comparable<Location>, Cloneable {
+public abstract class Location<T extends Location<T>> implements Comparable<Location<?>>, Iterable<Integer>, Cloneable {
 
     protected final int[] positions;
 
@@ -21,7 +23,7 @@ public abstract class Location implements Comparable<Location>, Cloneable {
         this.positions = positions.clone();
     }
 
-    private static int compare(Location a, Location b, int dimension) {
+    private static int compare(Location<?> a, Location<?> b, int dimension) {
         return Integer.signum(a.position(dimension) - b.position(dimension));
     }
 
@@ -60,7 +62,7 @@ public abstract class Location implements Comparable<Location>, Cloneable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Location location = (Location) o;
+        Location<?> location = (Location<?>) o;
         return Arrays.equals(positions, location.positions);
     }
 
@@ -92,13 +94,25 @@ public abstract class Location implements Comparable<Location>, Cloneable {
         return c;
     }
 
-    public Location clone() {
+    @Override
+    public Iterator<Integer> iterator() {
+        return new LocationIterator();
+    }
+
+    public T clone() {
         try {
-            return (Location) super.clone();
+            return (T) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Create location with zero positions with same dimensions
+     *
+     * @return a new location
+     */
+    public abstract T zero();
 
     /**
      * Immutable location (new or the same)
@@ -114,5 +128,23 @@ public abstract class Location implements Comparable<Location>, Cloneable {
      */
     public MutableLocation toMutable() {
         return new MutableLocation(positions);
+    }
+
+    private class LocationIterator implements Iterator<Integer> {
+
+        private int index;
+
+        @Override
+        public boolean hasNext() {
+            return index < positions.length;
+        }
+
+        @Override
+        public Integer next() {
+            if (index >= positions.length) {
+                throw new NoSuchElementException();
+            }
+            return positions[index++];
+        }
     }
 }

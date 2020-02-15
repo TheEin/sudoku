@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A rectangle region of cells identified by two corners
+ * A multi-dimensional rectangle region of cells identified by two corners
  */
 public class RectangleRegion implements Region {
 

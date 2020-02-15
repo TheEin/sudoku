@@ -6,7 +6,7 @@ import javax.validation.constraints.PositiveOrZero;
 /**
  * A multi-dimensional cell location. Mutable by design
  */
-public class MutableLocation extends Location {
+public class MutableLocation extends Location<MutableLocation> {
 
     public MutableLocation(@Positive int[] positions) {
         super(positions);
@@ -38,6 +38,11 @@ public class MutableLocation extends Location {
         int value = position(dimension) + 1;
         position(dimension, value);
         return value;
+    }
+
+    @Override
+    public MutableLocation zero() {
+        return MutableLocation.of(new int[dimensions()]);
     }
 
     @Override

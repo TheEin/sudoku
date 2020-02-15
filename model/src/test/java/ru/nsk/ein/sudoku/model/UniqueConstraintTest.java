@@ -1,6 +1,5 @@
 package ru.nsk.ein.sudoku.model;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.EnumSet;
@@ -17,9 +16,7 @@ public class UniqueConstraintTest {
 
     @Test(expected = IllegalStateException.class)
     public void testEmpty() {
-        EnumSet<DecimalDigit> set = EnumSet.of(DecimalDigit.ONE);
-        set.clear();
-        UniqueConstraint<DecimalDigit> constraint = new UniqueConstraint<>(region, set);
+        UniqueConstraint<DecimalDigit> constraint = new UniqueConstraint<>(region, EnumSet.noneOf(DecimalDigit.class));
         EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, null, DecimalDigit.ONE);
         assertEquals(0, possibleValues.size());
     }

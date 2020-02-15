@@ -27,4 +27,11 @@ public interface RegionConstraint<A extends Enum<A>> {
      * @throws IllegalStateException if the update will break the constraint
      */
     EnumSet<A> cellUpdate(Grid<A> grid, Location location, A from, A to);
+
+    /**
+     * Possible values for the region of the constraint
+     *
+     * @return the set of possible region cells values
+     */
+    EnumSet<A> possibleValues();
 }

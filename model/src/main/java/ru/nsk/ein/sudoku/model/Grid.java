@@ -23,7 +23,7 @@ public interface Grid<A extends Enum<A>> {
      *
      * @return a location beyond the grid distant corner
      */
-    Location size();
+    ImmutableLocation size();
 
     /**
      * Value of a cell
@@ -34,7 +34,7 @@ public interface Grid<A extends Enum<A>> {
      * @throws IllegalArgumentException  if the location dimensions differs
      */
     @Nullable
-    A cell(Location location);
+    A cell(Location<?> location);
 
     /**
      * Set a value of a cell
@@ -45,7 +45,7 @@ public interface Grid<A extends Enum<A>> {
      * @throws IllegalArgumentException  if the location dimensions differs
      * @throws IllegalStateException     if setting the cell to that value will break the grid constraints
      */
-    void cell(Location location, @Nullable A value);
+    void cell(Location<?> location, @Nullable A value);
 
     /**
      * Possible values for a cell those are not breaking the grid constraints
@@ -54,5 +54,5 @@ public interface Grid<A extends Enum<A>> {
      * @return a list of possible values;
      * may not be empty if the cell is not set at the location
      */
-    EnumSet<A> possibleValues(Location location);
+    EnumSet<A> possibleValues(Location<?> location);
 }

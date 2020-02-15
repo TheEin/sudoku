@@ -1,7 +1,7 @@
 package ru.nsk.ein.sudoku.model;
 
 /**
- * A region of cells
+ * A multi-dimensional region of cells
  */
 public interface Region extends Iterable<ImmutableLocation> {
 

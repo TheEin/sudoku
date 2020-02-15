@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 
-public abstract class LocationTest<T extends Location> {
+public abstract class LocationTest<T extends Location<T>> {
 
     private static final int DIM_MIN = 2;
 
@@ -103,7 +103,7 @@ public abstract class LocationTest<T extends Location> {
 
     @Test
     public void testEqualsIncompartible() {
-        Location shorterLocation = createLocation(shorterPositions());
+        T shorterLocation = createLocation(shorterPositions());
         assertNotEquals(testLocation, shorterLocation);
     }
 
@@ -132,21 +132,30 @@ public abstract class LocationTest<T extends Location> {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCompareAlternative() {
-        Location alternative = createLocation(alternativePositions());
+        T alternative = createLocation(alternativePositions());
         assertEquals(0, testLocation.compareTo(alternative));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCompareShorter() {
-        Location shorter = createLocation(shorterPositions());
+        T shorter = createLocation(shorterPositions());
         assertEquals(0, testLocation.compareTo(shorter));
     }
 
     @Test
     public void testClone() {
-        Location sameLocation = testLocation.clone();
+        T sameLocation = testLocation.clone();
         assertEquals(testLocation, sameLocation);
         assertNotSame(testLocation, sameLocation);
+    }
+
+    @Test
+    public void testZero() {
+        T zero = testLocation.zero();
+        assertEquals(testLocation.dimensions(), zero.dimensions());
+        for (int i = 0; i < zero.dimensions(); ++i) {
+            assertEquals(0, zero.position(i));
+        }
     }
 
     @Test
