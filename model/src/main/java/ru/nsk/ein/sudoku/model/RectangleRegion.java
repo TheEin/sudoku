@@ -36,6 +36,14 @@ public class RectangleRegion implements Region {
         });
     }
 
+    public static RectangleRegion of2d(int x1, int x2, int y1, int y2) {
+        return new RectangleRegion(ImmutableLocation.of(x1, y1), ImmutableLocation.of(x2, y2));
+    }
+
+    public static RectangleRegion of3d(int x1, int x2, int y1, int y2, int z1, int z2) {
+        return new RectangleRegion(ImmutableLocation.of(x1, y1, z1), ImmutableLocation.of(x2, y2, z2));
+    }
+
     @Override
     public Iterator<ImmutableLocation> iterator() {
         return new RegionIterator();

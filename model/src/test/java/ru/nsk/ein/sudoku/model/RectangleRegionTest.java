@@ -55,27 +55,35 @@ public class RectangleRegionTest {
         new RectangleRegion(end, begin);
     }
 
-    private void testRegion(int x1, int y1, int x2, int y2, int size) {
-        RectangleRegion r1 = new RectangleRegion(ImmutableLocation.of(x1, y1), ImmutableLocation.of(x2, y2));
-        assertEquals(size, r1.size());
+    private void testRegion(RectangleRegion r, int size) {
+        assertEquals(size, r.size());
         Set<ImmutableLocation> locations = new HashSet<>();
-        r1.forEach(location -> assertTrue(locations.add(location)));
+        r.forEach(location -> assertTrue(locations.add(location)));
         assertEquals(size, locations.size());
     }
 
     @Test
-    public void testRegion0() {
-        testRegion(0, 0, 1, 1, 1);
-    }
-
-    @Test
     public void testRegion1() {
-        testRegion(1, 1, 2, 2, 1);
+        testRegion(RectangleRegion.of2d(0, 1, 0, 1), 1);
     }
-
 
     @Test
     public void testRegion2() {
-        testRegion(0, 0, 2, 2, 4);
+        testRegion(RectangleRegion.of2d(1, 2, 1, 2), 1);
+    }
+
+    @Test
+    public void testRegion3() {
+        testRegion(RectangleRegion.of2d(0, 2, 0, 2), 4);
+    }
+
+    @Test
+    public void testRegion4() {
+        testRegion(RectangleRegion.of2d(0, 5, 0, 3), 15);
+    }
+
+    @Test
+    public void testRegion5() {
+        testRegion(RectangleRegion.of3d(0, 5, 0, 3, 0, 2), 30);
     }
 }
