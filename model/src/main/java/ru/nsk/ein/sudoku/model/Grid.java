@@ -12,6 +12,13 @@ import java.util.EnumSet;
 public interface Grid<A extends Enum<A>> {
 
     /**
+     * Alphabet of a grid
+     *
+     * @return the alphabet enum type
+     */
+    Class<A> alphabet();
+
+    /**
      * Size of the grid
      *
      * @return a location beyond the grid distant corner
