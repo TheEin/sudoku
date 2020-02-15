@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -60,6 +61,10 @@ public abstract class LocationTest<T extends Location> {
         return alternativePositions;
     }
 
+    protected int[] shorterPositions() {
+        return Arrays.copyOf(testPositions, testPositions.length - 1);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyPositions() {
         createLocation(new int[0]);
@@ -97,6 +102,12 @@ public abstract class LocationTest<T extends Location> {
     }
 
     @Test
+    public void testEqualsIncompartible() {
+        Location shorterLocation = createLocation(shorterPositions());
+        assertNotEquals(testLocation, shorterLocation);
+    }
+
+    @Test
     public void testHashCode() {
         T sameLocation = createLocation(testPositions);
         assertEquals(testLocation.hashCode(), sameLocation.hashCode());
@@ -117,6 +128,18 @@ public abstract class LocationTest<T extends Location> {
         T biggerLocation = createLocation(positions);
         assertEquals(-1, testLocation.compareTo(biggerLocation));
         assertEquals(1, biggerLocation.compareTo(testLocation));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareAlternative() {
+        Location alternative = createLocation(alternativePositions());
+        assertEquals(0, testLocation.compareTo(alternative));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareShorter() {
+        Location shorter = createLocation(shorterPositions());
+        assertEquals(0, testLocation.compareTo(shorter));
     }
 
     @Test

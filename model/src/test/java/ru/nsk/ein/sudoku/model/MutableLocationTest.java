@@ -9,7 +9,7 @@ public class MutableLocationTest extends LocationTest<MutableLocation> {
 
     @Override
     protected MutableLocation createLocation(int[] positions) {
-        return new MutableLocation(positions);
+        return MutableLocation.of(positions);
     }
 
     @Test

@@ -12,6 +12,10 @@ public class MutableLocation extends Location {
         super(positions);
     }
 
+    public static MutableLocation of(int... positions) {
+        return new MutableLocation(positions);
+    }
+
     /**
      * Set position on a dimension
      *

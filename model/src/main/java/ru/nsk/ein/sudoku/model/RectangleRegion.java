@@ -14,9 +14,16 @@ public class RectangleRegion implements Region {
 
     private ThreadLocal<Integer> size;
 
+    /**
+     * Constructor
+     *
+     * @param begin the left-upper corner of the region (inclusive)
+     * @param end   the right-bottom corner of th region (exclusive)
+     * @throws IllegalArgumentException if begin is not strictly smaller than end
+     */
     public RectangleRegion(ImmutableLocation begin, ImmutableLocation end) {
         if (begin.compareTo(end) >= 0) {
-            throw new IllegalArgumentException("Beginning of the square ought ot be strictly smaller than ending");
+            throw new IllegalArgumentException("Beginning of the square ought to be strictly smaller than ending");
         }
         this.begin = begin;
         this.end = end;
@@ -40,7 +47,7 @@ public class RectangleRegion implements Region {
     }
 
     private int length(int dimension) {
-        return begin.position(dimension) - end.position(dimension) + 1;
+        return end.position(dimension) - begin.position(dimension);
     }
 
     private class RegionIterator implements Iterator<ImmutableLocation> {
@@ -59,7 +66,7 @@ public class RectangleRegion implements Region {
             }
             ImmutableLocation location = next.toImmutable();
             for (int i = 0; ; ) {
-                if (next.incrementAndGet(i) <= end.position(i)) {
+                if (next.incrementAndGet(i) < end.position(i)) {
                     break;
                 }
                 next.position(i, 0);

@@ -7,6 +7,10 @@ import javax.validation.constraints.Positive;
  */
 public final class ImmutableLocation extends Location {
 
+    public static ImmutableLocation of(int... positions) {
+        return new ImmutableLocation(positions);
+    }
+
     public ImmutableLocation(@Positive int[] positions) {
         super(positions);
     }

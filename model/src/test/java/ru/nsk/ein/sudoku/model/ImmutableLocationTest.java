@@ -4,6 +4,6 @@ public class ImmutableLocationTest extends LocationTest<ImmutableLocation> {
 
     @Override
     protected ImmutableLocation createLocation(int[] positions) {
-        return new ImmutableLocation(positions);
+        return ImmutableLocation.of(positions);
     }
 }
