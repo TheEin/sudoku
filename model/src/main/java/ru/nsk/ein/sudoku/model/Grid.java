@@ -37,7 +37,7 @@ public interface Grid<A extends Enum<A>> {
     A cell(Location location);
 
     /**
-     * Value of a cell
+     * Set a value of a cell
      *
      * @param location a location of a cell
      * @param value    the cell value or {@code null} to unset

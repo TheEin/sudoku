@@ -7,7 +7,14 @@ import java.util.EnumSet;
  *
  * @param <A> the grid alphabet
  */
-public interface RegionConstraint<A extends Enum<A>> extends Iterable<Location> {
+public interface RegionConstraint<A extends Enum<A>> {
+
+    /**
+     * Region of grid cells
+     *
+     * @return the region of grid cells
+     */
+    Region region();
 
     /**
      * Called upon a grid cell update to validate the possibility
@@ -17,6 +24,7 @@ public interface RegionConstraint<A extends Enum<A>> extends Iterable<Location> 
      * @param from     an old cell value
      * @param to       the new cell value
      * @return the set of possible region cells values
+     * @throws IllegalStateException if the update will break the constraint
      */
     EnumSet<A> cellUpdate(Grid<A> grid, Location location, A from, A to);
 }
