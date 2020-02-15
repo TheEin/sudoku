@@ -1,26 +1,15 @@
 package ru.nsk.ein.sudoku.model;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import java.util.Set;
+import org.springframework.lang.Nullable;
+
+import java.util.EnumSet;
 
 /**
  * A multi-dimensional Sudoku grid
+ *
+ * @param <A> the grid alphabet
  */
-public interface Grid {
-
-    /**
-     * Constant value of an unset cell
-     */
-    int NOT_SET = 0;
-
-    /**
-     * Number of different cell values
-     *
-     * @return the maximum allowed cell value
-     */
-    @PositiveOrZero
-    int radix();
+public interface Grid<A extends Enum<A>> {
 
     /**
      * Size of the grid
@@ -33,24 +22,23 @@ public interface Grid {
      * Value of a cell
      *
      * @param location a location of a cell
-     * @return the cell value or {@link #NOT_SET}
+     * @return the cell value or {@code null} if it's not set
      * @throws IndexOutOfBoundsException in the location is beyond the grid
      * @throws IllegalArgumentException  if the location dimensions differs
      */
-    @PositiveOrZero
-    int cell(Location location);
+    @Nullable
+    A cell(Location location);
 
     /**
      * Value of a cell
      *
      * @param location a location of a cell
-     * @param value    the cell value or {@link #NOT_SET}
+     * @param value    the cell value or {@code null} to unset
      * @throws IndexOutOfBoundsException in the location is beyond the grid
      * @throws IllegalArgumentException  if the location dimensions differs
-     *                                   or the value is out of range
      * @throws IllegalStateException     if setting the cell to that value will break the grid constraints
      */
-    void cell(Location location, @PositiveOrZero int value);
+    void cell(Location location, @Nullable A value);
 
     /**
      * Possible values for a cell those are not breaking the grid constraints
@@ -59,5 +47,5 @@ public interface Grid {
      * @return a list of possible values;
      * may not be empty if the cell is not set at the location
      */
-    Set<@Positive Integer> possibleValues(Location location);
+    EnumSet<A> possibleValues(Location location);
 }
