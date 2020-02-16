@@ -1,5 +1,7 @@
 package ru.nsk.ein.sudoku.model;
 
+import org.springframework.lang.Nullable;
+
 import java.util.EnumSet;
 
 /**
@@ -26,7 +28,7 @@ public interface RegionConstraint<A extends Enum<A>> {
      * @return the set of possible region cells values
      * @throws IllegalStateException if the update will break the constraint
      */
-    EnumSet<A> cellUpdate(Grid<A> grid, Location location, A from, A to);
+    EnumSet<A> cellUpdate(Grid<A> grid, Location<?> location, @Nullable A from, @Nullable A to);
 
     /**
      * Possible values for the region of the constraint
