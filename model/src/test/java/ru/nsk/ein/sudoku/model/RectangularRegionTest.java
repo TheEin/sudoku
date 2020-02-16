@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RectangularRegionTest {
@@ -31,6 +32,8 @@ public class RectangularRegionTest {
 
     protected ImmutableLocation end;
 
+    protected ImmutableLocation location;
+
     protected RectangularRegion region;
 
     @BeforeClass
@@ -47,12 +50,47 @@ public class RectangularRegionTest {
             positions[i] = positions[i] + random.nextInt(LEN_MAX) + 1;
         }
         end = ImmutableLocation.of(positions);
+        MutableLocation location = end.toMutable();
+        for (int i = 0; i < location.dimensions(); ++i) {
+            location.position(i, location.position(i) - 1);
+        }
+        this.location = location.toImmutable();
         region = new RectangularRegion(begin, end);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvertedCorners() {
         new RectangularRegion(end, begin);
+    }
+
+    @Test
+    public void testContainsBegin() {
+        assertTrue(region.contains(begin));
+    }
+
+    @Test
+    public void testNotContainsEnd() {
+        assertFalse(region.contains(end));
+    }
+
+    @Test
+    public void testContainsLocation() {
+        assertTrue(region.contains(location));
+    }
+
+    @Test
+    public void testContainsRegion() {
+        assertTrue(region.contains(region));
+    }
+
+    @Test
+    public void testContainsSmallerRegion() {
+        assertTrue(region.contains(RectangularRegion.of(begin, location)));
+    }
+
+    @Test
+    public void testNotContainsRegion() {
+        assertFalse(RectangularRegion.of(begin, location).contains(region));
     }
 
     private void testRegion(RectangularRegion r, int size) {
