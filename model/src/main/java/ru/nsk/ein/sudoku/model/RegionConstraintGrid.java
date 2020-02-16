@@ -26,7 +26,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
 
     private List<List<RegionConstraint<A>>> cellConstraints;
 
-    public RegionConstraintGrid(Class<A> alphabet, Location<?> size, Collection<Region> uniqueRegions) {
+    public RegionConstraintGrid(Class<A> alphabet, Location<?> size, Collection<? extends Region> uniqueRegions) {
         this.alphabet = alphabet;
         this.size = size.toImmutable();
         universe = EnumSet.allOf(alphabet);
@@ -40,7 +40,6 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
         for (Region region : uniqueRegions) {
             constraints.add(new UniqueConstraint<>(region, universe));
         }
-        // TODO populate constraints with lines
     }
 
     @Override
