@@ -8,11 +8,13 @@ import java.util.NoSuchElementException;
 /**
  * A multi-dimensional rectangular region of cells identified by two corners
  */
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 public class RectangularRegion implements Region {
 
+    @ToString.Include
     private final ImmutableLocation begin;
 
+    @ToString.Include
     private final ImmutableLocation end;
 
     private ThreadLocal<Integer> size;
@@ -41,6 +43,10 @@ public class RectangularRegion implements Region {
 
     public static RectangularRegion of(ImmutableLocation begin, ImmutableLocation end) {
         return new RectangularRegion(begin, end);
+    }
+
+    public static RectangularRegion of(ImmutableLocation size) {
+        return new RectangularRegion(size.zero(), size);
     }
 
     public static RectangularRegion of2d(int x1, int x2, int y1, int y2) {
@@ -103,6 +109,7 @@ public class RectangularRegion implements Region {
     }
 
     @Override
+    @ToString.Include
     public int size() {
         return size.get();
     }
@@ -130,7 +137,7 @@ public class RectangularRegion implements Region {
                 if (next.incrementAndGet(i) < end.position(i)) {
                     break;
                 }
-                next.position(i, 0);
+                next.position(i, begin.position(i));
                 if (++i == next.dimensions()) {
                     next = null;
                     break;

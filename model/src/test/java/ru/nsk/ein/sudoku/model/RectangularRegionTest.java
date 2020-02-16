@@ -18,9 +18,11 @@ public class RectangularRegionTest {
 
     private static final int DIM_MAX = 5;
 
-    private static final int POS_MIN = 1;
+    private static final int POS_MIN = 2;
 
     private static final int POS_MAX = 10;
+
+    private static final int LEN_MIN = 2;
 
     private static final int LEN_MAX = 10;
 
@@ -47,7 +49,7 @@ public class RectangularRegionTest {
         int[] positions = random.ints(dimensions, POS_MIN, POS_MAX).toArray();
         begin = ImmutableLocation.of(positions);
         for (int i = 0; i < positions.length; ++i) {
-            positions[i] = positions[i] + random.nextInt(LEN_MAX) + 1;
+            positions[i] = positions[i] + random.nextInt(LEN_MAX - LEN_MIN + 1) + LEN_MIN;
         }
         end = ImmutableLocation.of(positions);
         MutableLocation location = end.toMutable();
@@ -122,6 +124,11 @@ public class RectangularRegionTest {
 
     @Test
     public void testRegion5() {
+        testRegion(RectangularRegion.of2d(1, 2, 0, 5), 5);
+    }
+
+    @Test
+    public void testRegion6() {
         testRegion(RectangularRegion.of3d(0, 5, 0, 3, 0, 2), 30);
     }
 }

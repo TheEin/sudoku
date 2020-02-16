@@ -1,5 +1,6 @@
 package ru.nsk.ein.sudoku.model;
 
+import lombok.ToString;
 import org.springframework.lang.Nullable;
 
 import java.util.EnumSet;
@@ -10,8 +11,10 @@ import java.util.Objects;
  *
  * @param <A> the grid alphabet
  */
+@ToString(onlyExplicitlyIncluded = true)
 public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstraint<A> {
 
+    @ToString.Include
     private final EnumSet<A> possibleValues;
 
     /**
@@ -38,6 +41,12 @@ public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstrain
             }
         }
         return possibleValues;
+    }
+
+    @ToString.Include
+    @Override
+    public Region region() {
+        return super.region();
     }
 
     @Override

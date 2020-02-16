@@ -91,7 +91,8 @@ public abstract class Location<T extends Location<T>> implements Comparable<Loca
         int c = compare(this, o, 0);
         for (int i = 1; i < dimensions(); ++i) {
             if (compare(this, o, i) != c) {
-                throw new IllegalArgumentException("Locations are not strictly comparable");
+                throw new IllegalArgumentException("Locations are not strictly comparable: " +
+                        "this = " + this + ", other = " + o);
             }
         }
         return c;

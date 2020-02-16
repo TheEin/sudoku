@@ -55,4 +55,25 @@ public interface Grid<A extends Enum<A>> {
      * may not be empty if the cell is not set at the location
      */
     EnumSet<A> possibleValues(Location<?> location);
+
+    /**
+     * Test whether the grid is solved
+     *
+     * @return the check result
+     * @throws IllegalStateException if the grid is unsolvable
+     */
+    default boolean isSolved() {
+        boolean solved = true;
+        RectangularRegion area = RectangularRegion.of(size());
+        for (ImmutableLocation location : area) {
+            A value = cell(location);
+            if (value == null) {
+                if (possibleValues(location).isEmpty()) {
+                    throw new IllegalStateException("Grid is unsolvable");
+                }
+                solved = false;
+            }
+        }
+        return solved;
+    }
 }
