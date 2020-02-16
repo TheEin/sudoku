@@ -15,14 +15,17 @@ public class SudokuGrids {
     /**
      * Rectangular Sudoku grid with non-intersectional blocks those fully covering the grid
      *
+     * @param <A>         the grid alphabet
+     * @param alphabet    an alphabet of a grid
      * @param gridWidth   a total grid width in cells
      * @param gridHeight  a total grid height in cells
      * @param blockWidth  a width in cells of the every block
      * @param blockHeight a height in cells of the every block
      * @return the rectangular grid
      */
-    public static Grid<DecimalDigit> rectangular(@Positive int gridWidth, @Positive int gridHeight,
-                                                 @Positive int blockWidth, @Positive int blockHeight) {
+    public static <A extends Enum<A>> Grid<A> rectangular(Class<A> alphabet,
+                                                          @Positive int gridWidth, @Positive int gridHeight,
+                                                          @Positive int blockWidth, @Positive int blockHeight) {
 
         if (gridWidth <= 0 || gridHeight <= 0 || blockWidth <= 0 || blockHeight <= 0) {
             throw new IllegalArgumentException("Size elements ought to be positive");
@@ -48,19 +51,21 @@ public class SudokuGrids {
                 uniqueRegions.add(RectangularRegion.of2d(x1, x2, y, y += blockHeight));
             }
         }
-        return new RegionConstraintGrid<>(DecimalDigit.class, ImmutableLocation.of(gridWidth, gridHeight), uniqueRegions);
+        return new RegionConstraintGrid<>(alphabet, ImmutableLocation.of(gridWidth, gridHeight), uniqueRegions);
     }
 
     /**
-     * Square Sudoku grid is having the same characteristics as the {@link #rectangular(int, int, int, int) rectangular}
+     * Square Sudoku grid is having the same characteristics as the {@link #rectangular(Class, int, int, int, int) rectangular}
      * except diagonal symmetry
      *
+     * @param <A>       the grid alphabet
+     * @param alphabet  an alphabet of a grid
      * @param gridSize  a total width and a total height of the grid in cells
      * @param blockSize a width and a height in cells of the every block
      * @return the square grid
      */
-    public static Grid<DecimalDigit> square(@Positive int gridSize, @Positive int blockSize) {
-        return rectangular(gridSize, gridSize, blockSize, blockSize);
+    public static <A extends Enum<A>> Grid<A> square(Class<A> alphabet, @Positive int gridSize, @Positive int blockSize) {
+        return rectangular(alphabet, gridSize, gridSize, blockSize, blockSize);
     }
 
     /**
@@ -69,6 +74,6 @@ public class SudokuGrids {
      * @return square 9x9 grid with 3x3 blocks with 1-9 numbers
      */
     public static Grid<DecimalDigit> regular() {
-        return square(9, 3);
+        return square(DecimalDigit.class, 9, 3);
     }
 }

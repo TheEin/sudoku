@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RegionConstraintGridTest {
@@ -33,7 +34,7 @@ public class RegionConstraintGridTest {
 
     protected ImmutableLocation testSize;
 
-    private Grid<DecimalDigit> grid;
+    private Grid<ThreeDigit> grid;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -45,7 +46,12 @@ public class RegionConstraintGridTest {
     @Before
     public void setUp() throws Exception {
         testSize = ImmutableLocation.of(testPositions);
-        grid = SudokuGrids.square(GRID_SIZE, BLOCK_SIZE);
+        grid = SudokuGrids.square(ThreeDigit.class, GRID_SIZE, BLOCK_SIZE);
+    }
+
+    @Test
+    public void testNotSolved() {
+        assertFalse(grid.isSolved());
     }
 
     @Test
@@ -63,7 +69,7 @@ public class RegionConstraintGridTest {
         for (int x = 0; x < GRID_SIZE; ++x) {
             for (int y = 0; y < GRID_SIZE; ++y) {
                 ImmutableLocation location = ImmutableLocation.of(x, y);
-                EnumSet<DecimalDigit> possibleValues = grid.possibleValues(location);
+                EnumSet<ThreeDigit> possibleValues = grid.possibleValues(location);
                 assertEquals("Validation failed at " + location,
                         counts[y][x], possibleValues.size());
             }
@@ -73,35 +79,80 @@ public class RegionConstraintGridTest {
     @Test
     public void testUniverse() {
         int[][] counts = {
-                {9, 9, 9, 9},
-                {9, 9, 9, 9},
-                {9, 9, 9, 9},
-                {9, 9, 9, 9}
+                {3, 3, 3, 3},
+                {3, 3, 3, 3},
+                {3, 3, 3, 3},
+                {3, 3, 3, 3}
         };
         testGrid(counts);
     }
 
     @Test
     public void testBegin() {
-        grid.cell(ImmutableLocation.of(0, 0), DecimalDigit.THREE);
+        grid.cell(ImmutableLocation.of(0, 0), ThreeDigit.TWO);
         int[][] counts = {
-                {8, 8, 8, 8},
-                {8, 8, 9, 9},
-                {8, 9, 9, 9},
-                {8, 9, 9, 9}
+                {2, 2, 2, 2},
+                {2, 2, 3, 3},
+                {2, 3, 3, 3},
+                {2, 3, 3, 3}
         };
         testGrid(counts);
     }
 
     @Test
     public void testEnd() {
-        grid.cell(ImmutableLocation.of(3, 3), DecimalDigit.SIX);
+        grid.cell(ImmutableLocation.of(3, 3), ThreeDigit.THREE);
         int[][] counts = {
-                {9, 9, 9, 8},
-                {9, 9, 9, 8},
-                {9, 9, 8, 8},
-                {8, 8, 8, 8}
+                {3, 3, 3, 2},
+                {3, 3, 3, 2},
+                {3, 3, 2, 2},
+                {2, 2, 2, 2}
         };
         testGrid(counts);
+    }
+
+    @Test
+    public void testBothSame() {
+        grid.cell(ImmutableLocation.of(0, 0), ThreeDigit.THREE);
+        grid.cell(ImmutableLocation.of(3, 3), ThreeDigit.THREE);
+        int[][] counts = {
+                {2, 2, 2, 2},
+                {2, 2, 3, 2},
+                {2, 3, 2, 2},
+                {2, 2, 2, 2}
+        };
+        testGrid(counts);
+    }
+
+    @Test
+    public void testBothDiff() {
+        grid.cell(ImmutableLocation.of(0, 0), ThreeDigit.TWO);
+        grid.cell(ImmutableLocation.of(3, 3), ThreeDigit.THREE);
+        int[][] counts = {
+                {2, 2, 2, 1},
+                {2, 2, 3, 2},
+                {2, 3, 2, 2},
+                {1, 2, 2, 2}
+        };
+        testGrid(counts);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testUnsolvable() {
+        grid.cell(ImmutableLocation.of(0, 0), ThreeDigit.ONE);
+        grid.cell(ImmutableLocation.of(1, 0), ThreeDigit.TWO);
+        grid.cell(ImmutableLocation.of(0, 1), ThreeDigit.THREE);
+        int[][] counts = {
+                {0, 0, 1, 1},
+                {0, 0, 2, 2},
+                {1, 2, 3, 3},
+                {1, 2, 3, 3}
+        };
+        testGrid(counts);
+        grid.isSolved();
+    }
+
+    private enum ThreeDigit {
+        ONE, TWO, THREE
     }
 }
