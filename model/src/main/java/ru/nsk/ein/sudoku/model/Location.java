@@ -1,5 +1,7 @@
 package ru.nsk.ein.sudoku.model;
 
+import lombok.ToString;
+
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import java.util.NoSuchElementException;
 /**
  * A multi-dimensional cell location
  */
+@ToString
 public abstract class Location<T extends Location<T>> implements Comparable<Location<?>>, Iterable<Integer>, Cloneable {
 
     protected final int[] positions;
@@ -59,7 +62,7 @@ public abstract class Location<T extends Location<T>> implements Comparable<Loca
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Location<?>)) {
             return false;
         }
         Location<?> location = (Location<?>) o;

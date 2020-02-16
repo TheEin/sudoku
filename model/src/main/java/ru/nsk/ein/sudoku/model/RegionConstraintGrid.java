@@ -32,12 +32,11 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
         universe = EnumSet.allOf(alphabet);
         area = new RectangleRegion(this.size.zero(), this.size);
         cells = new ArrayList<>(area.size());
-        int constraintsCount = uniqueRegions.size();
-        for (Integer position : size) {
-            constraintsCount += position;
-        }
-        constraints = new ArrayList<>(constraintsCount);
+        constraints = new ArrayList<>(uniqueRegions.size());
         for (Region region : uniqueRegions) {
+            if (!area.contains(region)) {
+                throw new IllegalArgumentException("Unique region is out of grid area" + region);
+            }
             constraints.add(new UniqueConstraint<>(region, universe));
         }
     }

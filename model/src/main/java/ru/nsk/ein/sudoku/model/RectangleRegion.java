@@ -1,11 +1,14 @@
 package ru.nsk.ein.sudoku.model;
 
+import lombok.ToString;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * A multi-dimensional rectangle region of cells identified by two corners
  */
+@ToString
 public class RectangleRegion implements Region {
 
     private final ImmutableLocation begin;
@@ -46,6 +49,52 @@ public class RectangleRegion implements Region {
 
     public static RectangleRegion of3d(int x1, int x2, int y1, int y2, int z1, int z2) {
         return RectangleRegion.of(ImmutableLocation.of(x1, y1, z1), ImmutableLocation.of(x2, y2, z2));
+    }
+
+    @Override
+    public boolean contains(Location<?> location) {
+        if (begin.dimensions() != location.dimensions()) {
+            return false;
+        }
+        for (int i = 0; i < begin.dimensions(); ++i) {
+            if (begin.position(i) > location.position(i)) {
+                return false;
+            }
+        }
+        for (int i = 0; i < end.dimensions(); ++i) {
+            if (location.position(i) >= end.position(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean contains(Region region) {
+        if (region instanceof RectangleRegion) {
+            RectangleRegion rr = (RectangleRegion) region;
+            if (begin.dimensions() != rr.begin.dimensions()) {
+                return false;
+            }
+            for (int i = 0; i < begin.dimensions(); ++i) {
+                if (begin.position(i) > rr.begin.position(i)) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < end.dimensions(); ++i) {
+                if (rr.end.position(i) > end.position(i)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (ImmutableLocation location : region) {
+                if (!contains(location)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     @Override

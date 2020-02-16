@@ -40,6 +40,18 @@ public class MutableLocation extends Location<MutableLocation> {
         return value;
     }
 
+    /**
+     * Increment all positions on the dimensions
+     *
+     * @return the updated location
+     */
+    public MutableLocation incrementAndGet() {
+        for (int i = 0; i < dimensions(); ++i) {
+            incrementAndGet(i);
+        }
+        return this;
+    }
+
     @Override
     public MutableLocation zero() {
         return MutableLocation.of(new int[dimensions()]);
