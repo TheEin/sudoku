@@ -11,7 +11,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RectangleRegionTest {
+public class RectangularRegionTest {
 
     private static final int DIM_MIN = 2;
 
@@ -31,7 +31,7 @@ public class RectangleRegionTest {
 
     protected ImmutableLocation end;
 
-    protected RectangleRegion region;
+    protected RectangularRegion region;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -47,15 +47,15 @@ public class RectangleRegionTest {
             positions[i] = positions[i] + random.nextInt(LEN_MAX) + 1;
         }
         end = ImmutableLocation.of(positions);
-        region = new RectangleRegion(begin, end);
+        region = new RectangularRegion(begin, end);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvertedCorners() {
-        new RectangleRegion(end, begin);
+        new RectangularRegion(end, begin);
     }
 
-    private void testRegion(RectangleRegion r, int size) {
+    private void testRegion(RectangularRegion r, int size) {
         assertEquals(size, r.size());
         Set<ImmutableLocation> locations = new HashSet<>();
         r.forEach(location -> assertTrue(locations.add(location)));
@@ -64,26 +64,26 @@ public class RectangleRegionTest {
 
     @Test
     public void testRegion1() {
-        testRegion(RectangleRegion.of2d(0, 1, 0, 1), 1);
+        testRegion(RectangularRegion.of2d(0, 1, 0, 1), 1);
     }
 
     @Test
     public void testRegion2() {
-        testRegion(RectangleRegion.of2d(1, 2, 1, 2), 1);
+        testRegion(RectangularRegion.of2d(1, 2, 1, 2), 1);
     }
 
     @Test
     public void testRegion3() {
-        testRegion(RectangleRegion.of2d(0, 2, 0, 2), 4);
+        testRegion(RectangularRegion.of2d(0, 2, 0, 2), 4);
     }
 
     @Test
     public void testRegion4() {
-        testRegion(RectangleRegion.of2d(0, 5, 0, 3), 15);
+        testRegion(RectangularRegion.of2d(0, 5, 0, 3), 15);
     }
 
     @Test
     public void testRegion5() {
-        testRegion(RectangleRegion.of3d(0, 5, 0, 3, 0, 2), 30);
+        testRegion(RectangularRegion.of3d(0, 5, 0, 3, 0, 2), 30);
     }
 }

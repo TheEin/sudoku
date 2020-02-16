@@ -38,14 +38,14 @@ public class SudokuGrids {
         List<Region> uniqueRegions = new ArrayList<>(blocksCount + gridWidth + gridHeight);
 
         for (int x = 0; x < gridWidth; ) {
-            uniqueRegions.add(RectangleRegion.of2d(x, ++x, 0, gridHeight));
+            uniqueRegions.add(RectangularRegion.of2d(x, ++x, 0, gridHeight));
         }
         for (int y = 0; y < gridHeight; ) {
-            uniqueRegions.add(RectangleRegion.of2d(0, gridWidth, y, ++y));
+            uniqueRegions.add(RectangularRegion.of2d(0, gridWidth, y, ++y));
         }
         for (int x1 = 0, x2 = blockWidth; x1 < gridWidth; x1 = x2, x2 += blockWidth) {
             for (int y = 0; y < gridHeight; ) {
-                uniqueRegions.add(RectangleRegion.of2d(x1, x2, y, y += blockHeight));
+                uniqueRegions.add(RectangularRegion.of2d(x1, x2, y, y += blockHeight));
             }
         }
         return new RegionConstraintGrid<>(DecimalDigit.class, ImmutableLocation.of(gridWidth, gridHeight), uniqueRegions);

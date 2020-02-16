@@ -18,7 +18,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
 
     private final EnumSet<A> universe;
 
-    private final RectangleRegion area;
+    private final RectangularRegion area;
 
     private final List<A> cells;
 
@@ -30,7 +30,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
         this.alphabet = alphabet;
         this.size = size.toImmutable();
         universe = EnumSet.allOf(alphabet);
-        area = new RectangleRegion(this.size.zero(), this.size);
+        area = new RectangularRegion(this.size.zero(), this.size);
         cells = new ArrayList<>(area.size());
         constraints = new ArrayList<>(uniqueRegions.size());
         for (Region region : uniqueRegions) {

@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A multi-dimensional rectangle region of cells identified by two corners
+ * A multi-dimensional rectangular region of cells identified by two corners
  */
 @ToString
-public class RectangleRegion implements Region {
+public class RectangularRegion implements Region {
 
     private final ImmutableLocation begin;
 
@@ -24,7 +24,7 @@ public class RectangleRegion implements Region {
      * @param end   the right-bottom corner of th region (exclusive)
      * @throws IllegalArgumentException if begin is not strictly smaller than end
      */
-    public RectangleRegion(ImmutableLocation begin, ImmutableLocation end) {
+    public RectangularRegion(ImmutableLocation begin, ImmutableLocation end) {
         if (begin.compareTo(end) >= 0) {
             throw new IllegalArgumentException("Beginning of the square ought to be strictly smaller than ending");
         }
@@ -39,16 +39,16 @@ public class RectangleRegion implements Region {
         });
     }
 
-    public static RectangleRegion of(ImmutableLocation begin, ImmutableLocation end) {
-        return new RectangleRegion(begin, end);
+    public static RectangularRegion of(ImmutableLocation begin, ImmutableLocation end) {
+        return new RectangularRegion(begin, end);
     }
 
-    public static RectangleRegion of2d(int x1, int x2, int y1, int y2) {
-        return RectangleRegion.of(ImmutableLocation.of(x1, y1), ImmutableLocation.of(x2, y2));
+    public static RectangularRegion of2d(int x1, int x2, int y1, int y2) {
+        return RectangularRegion.of(ImmutableLocation.of(x1, y1), ImmutableLocation.of(x2, y2));
     }
 
-    public static RectangleRegion of3d(int x1, int x2, int y1, int y2, int z1, int z2) {
-        return RectangleRegion.of(ImmutableLocation.of(x1, y1, z1), ImmutableLocation.of(x2, y2, z2));
+    public static RectangularRegion of3d(int x1, int x2, int y1, int y2, int z1, int z2) {
+        return RectangularRegion.of(ImmutableLocation.of(x1, y1, z1), ImmutableLocation.of(x2, y2, z2));
     }
 
     @Override
@@ -71,8 +71,8 @@ public class RectangleRegion implements Region {
 
     @Override
     public boolean contains(Region region) {
-        if (region instanceof RectangleRegion) {
-            RectangleRegion rr = (RectangleRegion) region;
+        if (region instanceof RectangularRegion) {
+            RectangularRegion rr = (RectangularRegion) region;
             if (begin.dimensions() != rr.begin.dimensions()) {
                 return false;
             }
