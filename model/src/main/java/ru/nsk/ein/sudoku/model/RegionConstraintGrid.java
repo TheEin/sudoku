@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @param <A>
  */
-public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
+public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<A> {
 
     private final Class<A> alphabet;
 
@@ -23,23 +23,26 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
 
     private final A[] cells;
 
-    private List<RegionConstraint<A>>[] cellConstraints;
+    private int emptyCellsCount;
 
-    private List<RegionConstraint<A>> constraints;
+    private List<RegionConstraint<A, RectangularRegion>>[] cellConstraints;
 
-    public RegionConstraintGrid(Class<A> alphabet, Location<?> size, Collection<? extends Region> uniqueRegions) {
+    private List<RegionConstraint<A, RectangularRegion>> constraints;
+
+    public RegionConstraintGrid(Class<A> alphabet, Location<?> size, Collection<RectangularRegion> uniqueRegions) {
         this.alphabet = alphabet;
         this.size = size.toImmutable();
         universe = EnumSet.allOf(alphabet);
         area = RectangularRegion.of(this.size);
         cells = (A[]) Array.newInstance(alphabet, area.size());
-        cellConstraints = (List<RegionConstraint<A>>[]) Array.newInstance(List.class, cells.length);
+        emptyCellsCount = cells.length;
+        cellConstraints = (List<RegionConstraint<A, RectangularRegion>>[]) Array.newInstance(List.class, cells.length);
         constraints = new ArrayList<>(uniqueRegions.size());
-        for (Region region : uniqueRegions) {
+        for (RectangularRegion region : uniqueRegions) {
             if (!area.contains(region)) {
                 throw new IllegalArgumentException("Unique region is out of grid area" + region);
             }
-            UniqueConstraint<A> constraint = new UniqueConstraint<>(region, universe);
+            UniqueConstraint<A, RectangularRegion> constraint = new UniqueConstraint<>(region, universe);
             constraints.add(constraint);
             for (ImmutableLocation location : region) {
                 cellConstraints(location).add(constraint);
@@ -47,16 +50,8 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
         }
     }
 
-    private int locationIndex(Location<?> location) {
-        int index = 0;
-        for (int i = 0; i < size.dimensions(); ++i) {
-            index = index * size.position(i) + location.position(i);
-        }
-        return index;
-    }
-
-    private List<RegionConstraint<A>> cellConstraints(int index) {
-        List<RegionConstraint<A>> c = cellConstraints[index];
+    private List<RegionConstraint<A, RectangularRegion>> cellConstraints(int index) {
+        List<RegionConstraint<A, RectangularRegion>> c = cellConstraints[index];
         if (c == null) {
             c = new ArrayList<>();
             cellConstraints[index] = c;
@@ -64,7 +59,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
         return c;
     }
 
-    private List<RegionConstraint<A>> cellConstraints(Location<?> location) {
+    private List<RegionConstraint<A, RectangularRegion>> cellConstraints(Location<?> location) {
         return cellConstraints(locationIndex(location));
     }
 
@@ -79,33 +74,60 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
     }
 
     @Override
+    public RectangularRegion area() {
+        return area;
+    }
+
+    @Override
     public ImmutableLocation size() {
         return size;
     }
 
     @Override
-    public A cell(Location<?> location) {
-        return cells[locationIndex(location)];
+    public int cellsCount() {
+        return cells.length;
+    }
+
+    @Override
+    public int emptyCellsCount() {
+        return emptyCellsCount;
+    }
+
+    @Override
+    public A cell(int index) {
+        return cells[index];
     }
 
     @Override
     public void cell(Location<?> location, A value) {
         int index = locationIndex(location);
         A from = cells[index];
-        List<RegionConstraint<A>> constraints = cellConstraints(index);
         cells[index] = value;
+        if (from != null) {
+            ++emptyCellsCount;
+        }
+        if (value != null) {
+            --emptyCellsCount;
+        }
+        List<RegionConstraint<A, RectangularRegion>> constraints = cellConstraints(index);
         int i = 0;
         try {
             for (; i < constraints.size(); ++i) {
-                RegionConstraint<A> constraint = constraints.get(i);
+                RegionConstraint<A, RectangularRegion> constraint = constraints.get(i);
                 constraint.cellUpdate(this, location, from, value);
             }
         } catch (IllegalStateException e) {
             // rollback changed cells and constraints
             cells[index] = from;
+            if (value != null) {
+                ++emptyCellsCount;
+            }
+            if (from != null) {
+                --emptyCellsCount;
+            }
             try {
                 for (--i; i >= 0; --i) {
-                    RegionConstraint<A> constraint = constraints.get(i);
+                    RegionConstraint<A, RectangularRegion> constraint = constraints.get(i);
                     constraint.cellUpdate(this, location, value, from);
                 }
             } catch (IllegalStateException error) {
@@ -119,7 +141,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
     @Override
     public EnumSet<A> possibleValues(Location<?> location) {
         EnumSet<A> possibleValues = universe();
-        for (RegionConstraint<A> constraint : cellConstraints(location)) {
+        for (RegionConstraint<A, RectangularRegion> constraint : cellConstraints(location)) {
             possibleValues.retainAll(constraint.possibleValues());
         }
         return possibleValues;

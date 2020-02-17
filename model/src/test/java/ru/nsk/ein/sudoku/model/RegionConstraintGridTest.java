@@ -34,7 +34,7 @@ public class RegionConstraintGridTest {
 
     protected ImmutableLocation testSize;
 
-    private Grid<ThreeDigit> grid;
+    private Grid<ThreeDigit, RectangularRegion> grid;
 
     @BeforeClass
     public static void beforeClass() throws Exception {

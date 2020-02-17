@@ -1,6 +1,7 @@
 package ru.nsk.ein.sudoku.solver;
 
 import ru.nsk.ein.sudoku.model.Grid;
+import ru.nsk.ein.sudoku.model.Region;
 
 /**
  * Solver is able to fill empty cells without breaking the grid constraints
@@ -8,11 +9,11 @@ import ru.nsk.ein.sudoku.model.Grid;
  * @param <A>
  * @param <T>
  */
-public abstract class Solver<A extends Enum<A>, T extends Grid<A>> {
+public abstract class Solver<A extends Enum<A>, R extends Region, T extends Grid<A, R>> {
 
     protected final T grid;
 
-    protected Solver(T grid) {
+    public Solver(T grid) {
         this.grid = grid;
     }
 

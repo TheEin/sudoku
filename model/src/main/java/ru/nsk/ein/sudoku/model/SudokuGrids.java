@@ -23,9 +23,10 @@ public class SudokuGrids {
      * @param blockHeight a height in cells of the every block
      * @return the rectangular grid
      */
-    public static <A extends Enum<A>> Grid<A> rectangular(Class<A> alphabet,
-                                                          @Positive int gridWidth, @Positive int gridHeight,
-                                                          @Positive int blockWidth, @Positive int blockHeight) {
+    public static <A extends Enum<A>> RectangularGrid<A> rectangular(
+            Class<A> alphabet,
+            @Positive int gridWidth, @Positive int gridHeight,
+            @Positive int blockWidth, @Positive int blockHeight) {
 
         if (gridWidth <= 0 || gridHeight <= 0 || blockWidth <= 0 || blockHeight <= 0) {
             throw new IllegalArgumentException("Size elements ought to be positive");
@@ -38,7 +39,7 @@ public class SudokuGrids {
         }
         int blocksCount = (gridWidth / blockWidth) * (gridHeight / blockHeight);
 
-        List<Region> uniqueRegions = new ArrayList<>(blocksCount + gridWidth + gridHeight);
+        List<RectangularRegion> uniqueRegions = new ArrayList<>(blocksCount + gridWidth + gridHeight);
 
         for (int x = 0; x < gridWidth; ) {
             uniqueRegions.add(RectangularRegion.of2d(x, ++x, 0, gridHeight));
@@ -64,7 +65,9 @@ public class SudokuGrids {
      * @param blockSize a width and a height in cells of the every block
      * @return the square grid
      */
-    public static <A extends Enum<A>> Grid<A> square(Class<A> alphabet, @Positive int gridSize, @Positive int blockSize) {
+    public static <A extends Enum<A>> RectangularGrid<A> square(
+            Class<A> alphabet, @Positive int gridSize, @Positive int blockSize) {
+
         return rectangular(alphabet, gridSize, gridSize, blockSize, blockSize);
     }
 
@@ -73,7 +76,7 @@ public class SudokuGrids {
      *
      * @return square 9x9 grid with 3x3 blocks with 1-9 numbers
      */
-    public static Grid<DecimalDigit> regular() {
+    public static RectangularGrid<DecimalDigit> regular() {
         return square(DecimalDigit.class, 9, 3);
     }
 }

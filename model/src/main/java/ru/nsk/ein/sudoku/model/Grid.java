@@ -9,7 +9,7 @@ import java.util.EnumSet;
  *
  * @param <A> the grid alphabet
  */
-public interface Grid<A extends Enum<A>> {
+public interface Grid<A extends Enum<A>, R extends Region> {
 
     /**
      * Alphabet of a grid
@@ -26,22 +26,57 @@ public interface Grid<A extends Enum<A>> {
     EnumSet<A> universe();
 
     /**
-     * Size of the grid
+     * Region of a grid
      *
-     * @return a location beyond the grid distant corner
+     * @return the grid region
      */
-    ImmutableLocation size();
+    R area();
+
+    /**
+     * Count of grid cells
+     *
+     * @return the cell count
+     */
+    int cellsCount();
+
+    /**
+     * Count of empty grid cells
+     *
+     * @return the empty cells count
+     */
+    default int emptyCellsCount() {
+        int c = 0;
+        for (int i = 0; i < cellsCount(); ++i) {
+            if (cell(i) == null) {
+                ++c;
+            }
+        }
+        return c;
+    }
+
+    /**
+     * Value of a cell
+     *
+     * @param index lain location index
+     * @return the cell value or {@code null} if it's not set
+     * @throws IndexOutOfBoundsException if the location index is out of range
+     * @throws IllegalArgumentException  if the location dimensions differs
+     */
+    @Nullable
+    A cell(int index);
 
     /**
      * Value of a cell
      *
      * @param location a location of a cell
      * @return the cell value or {@code null} if it's not set
-     * @throws IndexOutOfBoundsException in the location is beyond the grid
+     * @throws IndexOutOfBoundsException if the location is beyond the grid
      * @throws IllegalArgumentException  if the location dimensions differs
      */
     @Nullable
-    A cell(Location<?> location);
+    default A cell(Location<?> location) {
+        return cell(locationIndex(location));
+    }
 
     /**
      * Set a value of a cell
@@ -64,6 +99,14 @@ public interface Grid<A extends Enum<A>> {
     EnumSet<A> possibleValues(Location<?> location);
 
     /**
+     * Calculate location index
+     *
+     * @param location location of a cell
+     * @return plain location index
+     */
+    int locationIndex(Location<?> location);
+
+    /**
      * Test whether the grid is solved
      *
      * @return the check result
@@ -71,8 +114,7 @@ public interface Grid<A extends Enum<A>> {
      */
     default boolean isSolved() {
         boolean solved = true;
-        RectangularRegion area = RectangularRegion.of(size());
-        for (ImmutableLocation location : area) {
+        for (ImmutableLocation location : area()) {
             A value = cell(location);
             if (value == null) {
                 if (possibleValues(location).isEmpty()) {

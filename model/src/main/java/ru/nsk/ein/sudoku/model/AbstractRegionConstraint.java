@@ -1,15 +1,15 @@
 package ru.nsk.ein.sudoku.model;
 
-public abstract class AbstractRegionConstraint<A extends Enum<A>> implements RegionConstraint<A> {
+public abstract class AbstractRegionConstraint<A extends Enum<A>, R extends Region> implements RegionConstraint<A, R> {
 
-    private final Region region;
+    private final R region;
 
-    public AbstractRegionConstraint(Region region) {
+    public AbstractRegionConstraint(R region) {
         this.region = region;
     }
 
     @Override
-    public Region region() {
+    public R region() {
         return region;
     }
 }

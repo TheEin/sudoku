@@ -12,7 +12,7 @@ import java.util.Objects;
  * @param <A> the grid alphabet
  */
 @ToString(onlyExplicitlyIncluded = true)
-public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstraint<A> {
+public class UniqueConstraint<A extends Enum<A>, R extends Region> extends AbstractRegionConstraint<A, R> {
 
     @ToString.Include
     private final EnumSet<A> possibleValues;
@@ -23,13 +23,13 @@ public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstrain
      * @param region         a region of the constraint
      * @param possibleValues an initial set of possible values
      */
-    public UniqueConstraint(Region region, EnumSet<A> possibleValues) {
+    public UniqueConstraint(R region, EnumSet<A> possibleValues) {
         super(region);
         this.possibleValues = possibleValues.clone();
     }
 
     @Override
-    public EnumSet<A> cellUpdate(Grid<A> grid, Location<?> location, @Nullable A from, @Nullable A to) {
+    public EnumSet<A> cellUpdate(Grid<A, R> grid, Location<?> location, @Nullable A from, @Nullable A to) {
         if (!Objects.equals(from, to)) {
             if (to != null) {
                 if (!possibleValues.remove(to)) {
@@ -45,7 +45,7 @@ public class UniqueConstraint<A extends Enum<A>> extends AbstractRegionConstrain
 
     @ToString.Include
     @Override
-    public Region region() {
+    public R region() {
         return super.region();
     }
 

@@ -1,6 +1,6 @@
 package ru.nsk.ein.sudoku.text;
 
-import ru.nsk.ein.sudoku.model.Grid;
+import ru.nsk.ein.sudoku.model.RectangularGrid;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
  * @param <A> a grid alphabet type
  * @param <T> a grid type
  */
-public abstract class GridPrinter<A extends Enum<A>, T extends Grid<A>> {
+public abstract class GridPrinter<A extends Enum<A>, T extends RectangularGrid<A>> {
 
     protected final T grid;
 

@@ -1,7 +1,7 @@
 package ru.nsk.ein.sudoku.text;
 
-import ru.nsk.ein.sudoku.model.Grid;
 import ru.nsk.ein.sudoku.model.ImmutableLocation;
+import ru.nsk.ein.sudoku.model.RectangularGrid;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class GridPrinter2D<A extends Enum<A>, T extends Grid<A>> extends GridPrinter<A, T> {
+public class GridPrinter2D<A extends Enum<A>, T extends RectangularGrid<A>> extends GridPrinter<A, T> {
 
     protected final int width;
 
