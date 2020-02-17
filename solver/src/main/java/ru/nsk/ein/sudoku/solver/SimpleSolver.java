@@ -7,6 +7,13 @@ import ru.nsk.ein.sudoku.model.Region;
 import java.util.EnumSet;
 import java.util.Random;
 
+/**
+ * Simple solver implementation which is likely unable to solve a grid
+ *
+ * @param <A> the grid alphabet
+ * @param <R> the grid area type
+ * @param <T> the grid type
+ */
 public class SimpleSolver<A extends Enum<A>, R extends Region, T extends Grid<A, R>> extends Solver<A, R, T> {
 
     private final Random random = new Random();

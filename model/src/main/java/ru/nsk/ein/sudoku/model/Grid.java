@@ -8,6 +8,7 @@ import java.util.EnumSet;
  * A multi-dimensional Sudoku grid
  *
  * @param <A> the grid alphabet
+ * @param <R> the grid area type
  */
 public interface Grid<A extends Enum<A>, R extends Region> {
 

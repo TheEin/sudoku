@@ -6,8 +6,9 @@ import ru.nsk.ein.sudoku.model.Region;
 /**
  * Solver is able to fill empty cells without breaking the grid constraints
  *
- * @param <A>
- * @param <T>
+ * @param <A> the grid alphabet
+ * @param <R> the grid area type
+ * @param <T> the grid type
  */
 public abstract class Solver<A extends Enum<A>, R extends Region, T extends Grid<A, R>> {
 
