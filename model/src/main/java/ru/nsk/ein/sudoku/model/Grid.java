@@ -19,6 +19,13 @@ public interface Grid<A extends Enum<A>> {
     Class<A> alphabet();
 
     /**
+     * All alphabet values
+     *
+     * @return the alphabet enum set
+     */
+    EnumSet<A> universe();
+
+    /**
      * Size of the grid
      *
      * @return a location beyond the grid distant corner

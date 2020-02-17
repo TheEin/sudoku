@@ -74,6 +74,11 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
     }
 
     @Override
+    public EnumSet<A> universe() {
+        return universe.clone();
+    }
+
+    @Override
     public ImmutableLocation size() {
         return size;
     }
@@ -113,7 +118,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements Grid<A> {
 
     @Override
     public EnumSet<A> possibleValues(Location<?> location) {
-        EnumSet<A> possibleValues = universe.clone();
+        EnumSet<A> possibleValues = universe();
         for (RegionConstraint<A> constraint : cellConstraints(location)) {
             possibleValues.retainAll(constraint.possibleValues());
         }
