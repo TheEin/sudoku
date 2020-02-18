@@ -1,5 +1,7 @@
 package ru.nsk.ein.sudoku.model;
 
+import org.springframework.lang.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,8 +101,16 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
     }
 
     @Override
+    public void cell(int index, A value) {
+        cell(null, index, value);
+    }
+
+    @Override
     public void cell(Location<?> location, A value) {
-        int index = locationIndex(location);
+        cell(location, locationIndex(location), value);
+    }
+
+    private void cell(@Nullable Location<?> location, int index, @Nullable A value) {
         A from = cells[index];
         cells[index] = value;
         if (from != null) {
@@ -114,7 +124,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
         try {
             for (; i < constraints.size(); ++i) {
                 RegionConstraint<A, RectangularRegion> constraint = constraints.get(i);
-                constraint.cellUpdate(this, location, from, value);
+                constraint.cellUpdate(this, location, index, from, value);
             }
         } catch (IllegalStateException e) {
             // rollback changed cells and constraints
@@ -128,7 +138,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
             try {
                 for (--i; i >= 0; --i) {
                     RegionConstraint<A, RectangularRegion> constraint = constraints.get(i);
-                    constraint.cellUpdate(this, location, value, from);
+                    constraint.cellUpdate(this, location, index, value, from);
                 }
             } catch (IllegalStateException error) {
                 // broken constraint reversibility
@@ -139,9 +149,9 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
     }
 
     @Override
-    public EnumSet<A> possibleValues(Location<?> location) {
+    public EnumSet<A> possibleValues(int index) {
         EnumSet<A> possibleValues = universe();
-        for (RegionConstraint<A, RectangularRegion> constraint : cellConstraints(location)) {
+        for (RegionConstraint<A, RectangularRegion> constraint : cellConstraints(index)) {
             possibleValues.retainAll(constraint.possibleValues());
         }
         return possibleValues;

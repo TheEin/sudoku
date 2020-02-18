@@ -29,7 +29,7 @@ public class UniqueConstraint<A extends Enum<A>, R extends Region> extends Abstr
     }
 
     @Override
-    public EnumSet<A> cellUpdate(Grid<A, R> grid, Location<?> location, @Nullable A from, @Nullable A to) {
+    public EnumSet<A> cellUpdate(Grid<A, R> grid, Location<?> location, int index, @Nullable A from, @Nullable A to) {
         if (!Objects.equals(from, to)) {
             if (to != null) {
                 if (!possibleValues.remove(to)) {

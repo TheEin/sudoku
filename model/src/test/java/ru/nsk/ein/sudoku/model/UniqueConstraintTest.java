@@ -17,22 +17,22 @@ public class UniqueConstraintTest {
     @Test(expected = IllegalStateException.class)
     public void testEmpty() {
         UniqueConstraint<DecimalDigit, RectangularRegion> constraint = new UniqueConstraint<>(region, EnumSet.noneOf(DecimalDigit.class));
-        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, null, DecimalDigit.ONE);
+        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, 0, null, DecimalDigit.ONE);
         assertEquals(0, possibleValues.size());
     }
 
     @Test
     public void testEquals() {
         UniqueConstraint<DecimalDigit, RectangularRegion> constraint = new UniqueConstraint<>(region, EnumSet.of(DecimalDigit.FIVE));
-        constraint.cellUpdate(grid, location, null, DecimalDigit.FIVE);
-        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, DecimalDigit.FIVE, DecimalDigit.FIVE);
+        constraint.cellUpdate(grid, location, 0, null, DecimalDigit.FIVE);
+        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, 0, DecimalDigit.FIVE, DecimalDigit.FIVE);
         assertEquals(0, possibleValues.size());
     }
 
     @Test
     public void testSingle() {
         UniqueConstraint<DecimalDigit, RectangularRegion> constraint = new UniqueConstraint<>(region, EnumSet.of(DecimalDigit.FIVE));
-        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, null, DecimalDigit.FIVE);
+        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, 0, null, DecimalDigit.FIVE);
         assertEquals(0, possibleValues.size());
     }
 
@@ -40,8 +40,8 @@ public class UniqueConstraintTest {
     public void testDouble() {
         UniqueConstraint<DecimalDigit, RectangularRegion> constraint = new UniqueConstraint<>(region,
                 EnumSet.of(DecimalDigit.THREE, DecimalDigit.SEVEN));
-        constraint.cellUpdate(grid, location, null, DecimalDigit.THREE);
-        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, DecimalDigit.THREE, DecimalDigit.SEVEN);
+        constraint.cellUpdate(grid, location, 0, null, DecimalDigit.THREE);
+        EnumSet<DecimalDigit> possibleValues = constraint.cellUpdate(grid, location, 0, DecimalDigit.THREE, DecimalDigit.SEVEN);
         assertEquals(1, possibleValues.size());
     }
 }

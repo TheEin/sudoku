@@ -38,7 +38,9 @@ public interface Grid<A extends Enum<A>, R extends Region> {
      *
      * @return the cell count
      */
-    int cellsCount();
+    default int cellsCount() {
+        return area().size();
+    }
 
     /**
      * Count of empty grid cells
@@ -58,7 +60,7 @@ public interface Grid<A extends Enum<A>, R extends Region> {
     /**
      * Value of a cell
      *
-     * @param index lain location index
+     * @param index plain location index
      * @return the cell value or {@code null} if it's not set
      * @throws IndexOutOfBoundsException if the location index is out of range
      * @throws IllegalArgumentException  if the location dimensions differs
@@ -82,6 +84,17 @@ public interface Grid<A extends Enum<A>, R extends Region> {
     /**
      * Set a value of a cell
      *
+     * @param index plain location index
+     * @param value    the cell value or {@code null} to unset
+     * @throws IndexOutOfBoundsException in the location is beyond the grid
+     * @throws IllegalArgumentException  if the location dimensions differs
+     * @throws IllegalStateException     if setting the cell to that value will break the grid constraints
+     */
+    void cell(int index, @Nullable A value);
+
+    /**
+     * Set a value of a cell
+     *
      * @param location a location of a cell
      * @param value    the cell value or {@code null} to unset
      * @throws IndexOutOfBoundsException in the location is beyond the grid
@@ -93,11 +106,22 @@ public interface Grid<A extends Enum<A>, R extends Region> {
     /**
      * Possible values for a cell those are not breaking the grid constraints
      *
+     * @param index plain location index
+     * @return a list of possible values;
+     * may not be empty if the cell is not set at the location
+     */
+    EnumSet<A> possibleValues(int index);
+
+    /**
+     * Possible values for a cell those are not breaking the grid constraints
+     *
      * @param location a location of a cell
      * @return a list of possible values;
      * may not be empty if the cell is not set at the location
      */
-    EnumSet<A> possibleValues(Location<?> location);
+    default EnumSet<A> possibleValues(Location<?> location) {
+        return possibleValues(locationIndex(location));
+    }
 
     /**
      * Calculate location index

@@ -23,12 +23,13 @@ public interface RegionConstraint<A extends Enum<A>, R extends Region> {
      *
      * @param grid     the grid is being updated
      * @param location the cell location
+     * @param index    plain location index
      * @param from     an old cell value
      * @param to       the new cell value
      * @return the set of possible region cells values
      * @throws IllegalStateException if the update will break the constraint
      */
-    EnumSet<A> cellUpdate(Grid<A, R> grid, Location<?> location, @Nullable A from, @Nullable A to);
+    EnumSet<A> cellUpdate(Grid<A, R> grid, @Nullable Location<?> location, int index, @Nullable A from, @Nullable A to);
 
     /**
      * Possible values for the region of the constraint
