@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A multi-dimension Sudoku grid comprises regions of constrained cells
@@ -155,5 +156,16 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
             possibleValues.retainAll(constraint.possibleValues());
         }
         return possibleValues;
+    }
+
+    @Override
+    public <T extends Grid<A, RectangularRegion>> T duplicate() {
+        return (T) new RegionConstraintGrid<A>(
+                alphabet,
+                size,
+                constraints.stream()
+                        .map(RegionConstraint::region)
+                        .collect(Collectors.toList()));
+
     }
 }

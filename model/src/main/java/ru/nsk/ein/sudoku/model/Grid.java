@@ -85,7 +85,7 @@ public interface Grid<A extends Enum<A>, R extends Region> {
      * Set a value of a cell
      *
      * @param index plain location index
-     * @param value    the cell value or {@code null} to unset
+     * @param value the cell value or {@code null} to unset
      * @throws IndexOutOfBoundsException in the location is beyond the grid
      * @throws IllegalArgumentException  if the location dimensions differs
      * @throws IllegalStateException     if setting the cell to that value will break the grid constraints
@@ -130,6 +130,13 @@ public interface Grid<A extends Enum<A>, R extends Region> {
      * @return plain location index
      */
     int locationIndex(Location<?> location);
+
+    /**
+     * Create an empty copy of the grid
+     *
+     * @return the copy
+     */
+    <T extends Grid<A, R>> T duplicate();
 
     /**
      * Test whether the grid is solved
