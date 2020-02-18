@@ -1,8 +1,10 @@
 package ru.nsk.ein.sudoku.solver;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import ru.nsk.ein.sudoku.model.DecimalDigit;
+import ru.nsk.ein.sudoku.model.Grid;
 import ru.nsk.ein.sudoku.model.RectangularGrid;
 import ru.nsk.ein.sudoku.model.RectangularRegion;
 import ru.nsk.ein.sudoku.model.SudokuGrids;
@@ -16,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertTrue;
 
 public class BruteForceSolverTest {
 
@@ -30,21 +33,44 @@ public class BruteForceSolverTest {
         grid = SudokuGrids.regular();
         solver = new BruteForceSolver<>(grid);
         printer = GridPrinters.defaultConsolePrinter(grid);
+        solver.solve();
+        printer.print();
     }
 
     @Test
-    public void testSingle() throws IOException {
-        try {
+    public void testStart() throws IOException {
+        Grid<DecimalDigit, RectangularRegion> prev = grid.snapshot();
+        for (int i = 0; i < 2; ++i) {
             solver.solve();
-            System.out.println("Grid has been solved");
-        } catch (IllegalStateException e) {
-            System.out.println("Grid was not solved; empty cells count = " + grid.emptyCellsCount());
+            Grid<DecimalDigit, RectangularRegion> snapshot = grid.snapshot();
+            assertTrue(prev.compareTo(snapshot) < 0);
+            prev = snapshot;
+        }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testEnd() throws IOException {
+        for (int i = 0; i < grid.cellsCount(); i += 3) {
+            grid.cell(i, null);
+        }
+        solver = new BruteForceSolver<>(grid);
+        int n = 0;
+        try {
+            Grid<DecimalDigit, RectangularRegion> prev = grid.snapshot();
+            for (; n < 2000; ++n) {
+                solver.solve();
+                Grid<DecimalDigit, RectangularRegion> snapshot = grid.snapshot();
+                assertTrue(prev.compareTo(snapshot) != 0);
+                prev = snapshot;
+            }
         } finally {
+            System.out.println("Grid was solved " + n + " times");
             printer.print();
         }
     }
 
     @Test
+    @Ignore
     public void testAll() throws IOException {
         AtomicInteger n = new AtomicInteger();
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);

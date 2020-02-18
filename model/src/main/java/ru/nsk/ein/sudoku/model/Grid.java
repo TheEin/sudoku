@@ -3,6 +3,7 @@ package ru.nsk.ein.sudoku.model;
 import org.springframework.lang.Nullable;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
 /**
  * A multi-dimensional Sudoku grid
@@ -10,7 +11,7 @@ import java.util.EnumSet;
  * @param <A> the grid alphabet
  * @param <R> the grid area type
  */
-public interface Grid<A extends Enum<A>, R extends Region> {
+public interface Grid<A extends Enum<A>, R extends Region> extends Comparable<Grid<A, R>> {
 
     /**
      * Alphabet of a grid
@@ -136,7 +137,16 @@ public interface Grid<A extends Enum<A>, R extends Region> {
      *
      * @return the copy
      */
-    <T extends Grid<A, R>> T duplicate();
+    <T extends Grid<A, R>> T emptyCopy();
+
+    /**
+     * Create a read-only copy of the grid
+     *
+     * @return the copy
+     */
+    default Grid<A, R> snapshot() {
+        return new SnapshotGrid<>(this);
+    }
 
     /**
      * Test whether the grid is solved
@@ -156,5 +166,26 @@ public interface Grid<A extends Enum<A>, R extends Region> {
             }
         }
         return solved;
+    }
+
+    /**
+     * Compares with an another grid cell by cell
+     *
+     * @param grid the other grid
+     * @return the comparison result
+     * @throws IllegalStateException if the grid regions differ
+     */
+    default int compareTo(Grid<A, R> grid) {
+        if (cellsCount() != grid.cellsCount()) {
+            throw new IllegalArgumentException("Grid regions differ");
+        }
+        for (int i = 0; i < cellsCount(); ++i) {
+            int v1 = Optional.ofNullable(cell(i)).map(Enum::ordinal).orElse(-1);
+            int v2 = Optional.ofNullable(grid.cell(i)).map(Enum::ordinal).orElse(-1);
+            if (v1 != v2) {
+                return v1 - v2;
+            }
+        }
+        return 0;
     }
 }

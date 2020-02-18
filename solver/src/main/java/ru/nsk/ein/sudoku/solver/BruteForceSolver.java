@@ -107,7 +107,7 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
     }
 
     private BruteForceSolver<A,R,T> fork() {
-        T g = grid.duplicate();
+        T g = grid.emptyCopy();
         throw new UnsupportedOperationException();
     }
 

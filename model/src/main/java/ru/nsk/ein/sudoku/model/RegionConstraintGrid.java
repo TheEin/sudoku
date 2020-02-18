@@ -159,7 +159,7 @@ public class RegionConstraintGrid<A extends Enum<A>> implements RectangularGrid<
     }
 
     @Override
-    public <T extends Grid<A, RectangularRegion>> T duplicate() {
+    public <T extends Grid<A, RectangularRegion>> T emptyCopy() {
         return (T) new RegionConstraintGrid<A>(
                 alphabet,
                 size,
