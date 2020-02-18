@@ -7,7 +7,7 @@ import ru.nsk.ein.sudoku.model.RectangularGrid;
 import ru.nsk.ein.sudoku.model.RectangularRegion;
 import ru.nsk.ein.sudoku.model.SudokuGrids;
 import ru.nsk.ein.sudoku.text.GridPrinter;
-import ru.nsk.ein.sudoku.text.GridPrinters;
+import ru.nsk.ein.sudoku.text.GridText;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class SimpleSolverTest {
     public void setUp() throws Exception {
         grid = SudokuGrids.regular();
         solver = new SimpleSolver<>(grid);
-        printer = GridPrinters.defaultConsolePrinter(grid);
+        printer = GridText.defaultConsolePrinter(grid);
     }
 
     @Test

@@ -3,8 +3,6 @@ package ru.nsk.ein.sudoku.solver;
 import ru.nsk.ein.sudoku.model.Grid;
 import ru.nsk.ein.sudoku.model.Region;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
 
@@ -17,7 +15,7 @@ import java.util.Iterator;
  */
 public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Grid<A, R>> extends Solver<A, R, T> {
 
-    private A[] changes;
+    private boolean[] fixed;
 
     private int index = -1;
 
@@ -25,20 +23,16 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
 
     public BruteForceSolver(T grid) {
         super(grid);
-        changes = (A[]) Array.newInstance(grid.alphabet(), grid.cellsCount());
-    }
-
-    public A[] changes() {
-        if (index <= 0) {
-            return null;
+        fixed = new boolean[grid.cellsCount()];
+        for (int i = 0; i < fixed.length; ++i) {
+            fixed[i] = grid.cell(i) != null;
         }
-        return Arrays.copyOf(changes, index);
     }
 
     private boolean nextEmpty() {
         do {
             ++index;
-            if (index == changes.length) {
+            if (index == fixed.length) {
                 return false;
             }
             value = grid.cell(index);
@@ -52,14 +46,14 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
             if (index < 0) {
                 return false;
             }
-            value = changes[index];
-        } while (value == null);
+        } while (fixed[index]);
+        value = grid.cell(index);
         return true;
     }
 
     @Override
     public void solve() {
-        if (index == changes.length) {
+        if (index == fixed.length) {
             if (!prevChanged()) {
                 throw new IllegalStateException("Unsolvable grid");
             }
@@ -97,18 +91,53 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
                 if (!prevChanged()) {
                     throw new IllegalStateException("Unsolvable grid");
                 }
-            } else {
-                changes[index] = value;
-                if (!nextEmpty()) {
-                    return;
-                }
+            } else if (!nextEmpty()) {
+                return;
             }
         }
     }
 
-    private BruteForceSolver<A,R,T> fork() {
-        T g = grid.emptyCopy();
-        throw new UnsupportedOperationException();
+    public BruteForceSolver<A, R, T> fork() {
+        BruteForceSolver<A, R, T> fork = new BruteForceSolver<>(gridCopy());
+        while (true) {
+            fork.nextEmpty();
+            if (fork.grid.emptyCellsCount() < 10) {
+                throw new IllegalStateException("Solving is about to finish");
+            }
+            A v = grid.cell(fork.index);
+            EnumSet<A> possibleValues = fork.grid.possibleValues(fork.index);
+            Iterator<A> iterator = possibleValues.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().equals(v)) {
+                    break;
+                }
+            }
+            fork.grid.cell(fork.index, v);
+            fork.fixed[fork.index] = true;
+            if (iterator.hasNext()) {
+                A n = iterator.next();
+                index = fork.index;
+                while (++fork.index < fixed.length) {
+                    fork.grid.cell(fork.index, grid.cell(fork.index));
+                    fork.fixed[fork.index] = fixed[fork.index];
+                    if (!fixed[fork.index]) {
+                        grid.cell(fork.index, null);
+                    }
+                }
+                grid.cell(index, n);
+                return fork;
+            }
+        }
+    }
+
+    private T gridCopy() {
+        T copy = grid.emptyCopy();
+        for (int i = 0; i < fixed.length; ++i) {
+            if (fixed[i]) {
+                copy.cell(i, grid.cell(i));
+            }
+        }
+        return copy;
     }
 
     @Override
