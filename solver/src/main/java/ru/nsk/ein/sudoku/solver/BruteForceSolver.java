@@ -149,8 +149,8 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
                     }
                 }
                 grid.cell(index, n);
+                fork.forkSolve = forkSolve;
                 forkSolve = false;
-                fork.forkSolve = true;
                 return fork;
             }
         }

@@ -39,10 +39,7 @@ public class GridLoader2D<A extends Enum<A>, T extends RectangularGrid<A>> exten
             }
             for (String s : line.split(delimiter)) {
                 s = s.trim();
-                if (s.isEmpty()) {
-                    continue;
-                }
-                A value = alphabet.get(s);
+                A value = s.isEmpty() ? null : alphabet.get(s);
                 grid.cell(location, value);
                 if (location.incrementAndGet(0) == width) {
                     break;

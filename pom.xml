@@ -22,6 +22,7 @@
         <module>model</module>
         <module>text</module>
         <module>solver</module>
+        <module>demo</module>
     </modules>
 
     <dependencyManagement>
@@ -44,6 +45,12 @@
             <dependency>
                 <groupId>ru.nsk.ein.sudoku</groupId>
                 <artifactId>text</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.nsk.ein.sudoku</groupId>
+                <artifactId>solver</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
