@@ -5,6 +5,8 @@ import ru.nsk.ein.sudoku.model.Region;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * Brute force solver implementation
@@ -13,13 +15,19 @@ import java.util.Iterator;
  * @param <R> the grid area type
  * @param <T> the grid type
  */
-public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Grid<A, R>> extends Solver<A, R, T> {
+public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Grid<A, R>>
+        extends Solver<A, R, T>
+        implements Spliterator<BruteForceSolver<A, R, T>> {
 
     private boolean[] fixed;
 
     private int index = -1;
 
     private A value;
+
+    private boolean forkSolve = false;
+
+    private boolean unsolvable = false;
 
     public BruteForceSolver(T grid) {
         super(grid);
@@ -51,11 +59,23 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
         return true;
     }
 
+    private IllegalStateException unsolvable() {
+        unsolvable = true;
+        return new IllegalStateException("Unsolvable grid");
+    }
+
     @Override
     public void solve() {
+        if (forkSolve) {
+            forkSolve = false;
+            return;
+        }
+        if (unsolvable) {
+            throw unsolvable();
+        }
         if (index == fixed.length) {
             if (!prevChanged()) {
-                throw new IllegalStateException("Unsolvable grid");
+                throw unsolvable();
             }
         } else if (!nextEmpty()) {
             return;
@@ -75,7 +95,7 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
             }
             if (!iterator.hasNext()) {
                 if (!prevChanged()) {
-                    throw new IllegalStateException("Unsolvable grid");
+                    throw unsolvable();
                 }
                 continue;
             }
@@ -89,7 +109,7 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
             } while (value == null && iterator.hasNext());
             if (value == null) {
                 if (!prevChanged()) {
-                    throw new IllegalStateException("Unsolvable grid");
+                    throw unsolvable();
                 }
             } else if (!nextEmpty()) {
                 return;
@@ -98,10 +118,14 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
     }
 
     public BruteForceSolver<A, R, T> fork() {
+        if (index != fixed.length && !forkSolve) {
+            solve();
+            forkSolve = true;
+        }
         BruteForceSolver<A, R, T> fork = new BruteForceSolver<>(gridCopy());
         while (true) {
             fork.nextEmpty();
-            if (fork.grid.emptyCellsCount() < 10) {
+            if (fork.grid.emptyCellsCount() < 10 || fork.index == fixed.length) {
                 throw new IllegalStateException("Solving is about to finish");
             }
             A v = grid.cell(fork.index);
@@ -125,6 +149,8 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
                     }
                 }
                 grid.cell(index, n);
+                forkSolve = false;
+                fork.forkSolve = true;
                 return fork;
             }
         }
@@ -142,6 +168,43 @@ public class BruteForceSolver<A extends Enum<A>, R extends Region, T extends Gri
 
     @Override
     public void reset() {
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < fixed.length; ++i) {
+            if (!fixed[i]) {
+                grid.cell(i, null);
+            }
+        }
+        index = -1;
+        forkSolve = false;
+        unsolvable = false;
+    }
+
+    @Override
+    public boolean tryAdvance(Consumer<? super BruteForceSolver<A, R, T>> action) {
+        try {
+            solve();
+            action.accept(this);
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Spliterator<BruteForceSolver<A, R, T>> trySplit() {
+        try {
+            return fork();
+        } catch (IllegalStateException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public long estimateSize() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public int characteristics() {
+        return ORDERED | DISTINCT | NONNULL;
     }
 }

@@ -11,6 +11,8 @@ import ru.nsk.ein.sudoku.text.GridPrinter;
 import ru.nsk.ein.sudoku.text.GridText;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,8 +76,7 @@ public class BruteForceSolverTest {
         printer.print();
 
         solver = new BruteForceSolver<>(grid);
-        solver.solve();
-        int n = 1;
+        int n = 0;
 
         System.out.println("grid first solve");
         printer.print();
@@ -104,5 +105,16 @@ public class BruteForceSolverTest {
             }
         }
         assertEquals(EXPECTED_COUNT, n);
+    }
+
+    @Test
+    public void testParallel() throws IOException {
+        GridText.loadFromResource(grid, "sample_grid.txt");
+        solver = new BruteForceSolver<>(grid);
+        AtomicInteger n = new AtomicInteger();
+
+        StreamSupport.stream(solver, true).forEach(s -> n.incrementAndGet());
+
+        assertEquals(EXPECTED_COUNT, n.get());
     }
 }
